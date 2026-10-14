@@ -1,0 +1,8 @@
+# classes compiladas
+bin/
+*.class
+
+# IDEs
+.vscode/
+.idea/
+*.iml
