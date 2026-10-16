@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 1)
+title Bolonha e Milano - Diagrama de classes (Etapa 2)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -11,12 +11,36 @@ class Main {
 class Menu {
   - scanner: Scanner
   - emExecucao: boolean
+  - jogador: Jogador
+  - cidade: Cidade
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
   - processarOpcao(opcao: int): void
+  - iniciarNovoJogo(): void
+  - exibirStatus(): void
   - exibirSobre(): void
 }
 
+class Jogador {
+  - nome: String
+  - titulo: String
+  + Jogador(nome: String)
+  + getNome(): String
+  + getTitulo(): String
+}
+
+class Cidade {
+  - nome: String
+  - anoAtual: int
+  - dono: Jogador
+  + Cidade(nome: String, dono: Jogador)
+  + avancarAno(): void
+  + exibirStatus(): void
+}
+
 Main ..> Menu : cria e usa
+Menu --> "0..1" Jogador
+Menu --> "0..1" Cidade
+Cidade --> "1" Jogador : dono
 @enduml
