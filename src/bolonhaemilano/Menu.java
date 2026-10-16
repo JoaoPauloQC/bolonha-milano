@@ -10,6 +10,8 @@ public class Menu {
 
     private Scanner scanner;
     private boolean emExecucao;
+    private Jogador jogador;
+    private Cidade cidade;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -32,7 +34,8 @@ public class Menu {
         System.out.println("  Um jogo de estrategia economica medieval");
         System.out.println("==========================================");
         System.out.println("1 - Novo jogo");
-        System.out.println("2 - Sobre o jogo");
+        System.out.println("2 - Ver status da cidade");
+        System.out.println("3 - Sobre o jogo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opcao: ");
     }
@@ -52,9 +55,12 @@ public class Menu {
     private void processarOpcao(int opcao) {
         switch (opcao) {
             case 1:
-                System.out.println("Novo jogo: em construcao (disponivel na Etapa 2).");
+                iniciarNovoJogo();
                 break;
             case 2:
+                exibirStatus();
+                break;
+            case 3:
                 exibirSobre();
                 break;
             case 0:
@@ -65,6 +71,32 @@ public class Menu {
                 System.out.println("Opcao invalida. Tente novamente.");
                 break;
         }
+    }
+
+    private void iniciarNovoJogo() {
+        System.out.print("Digite o nome do jogador: ");
+        String nomeJogador = scanner.nextLine().trim();
+        if (nomeJogador.isEmpty()) {
+            nomeJogador = "Jogador 1";
+        }
+        System.out.print("Digite o nome da cidade: ");
+        String nomeCidade = scanner.nextLine().trim();
+        if (nomeCidade.isEmpty()) {
+            nomeCidade = "Bolonha";
+        }
+
+        jogador = new Jogador(nomeJogador);
+        cidade = new Cidade(nomeCidade, jogador);
+        System.out.println("Novo jogo iniciado!");
+        cidade.exibirStatus();
+    }
+
+    private void exibirStatus() {
+        if (cidade == null) {
+            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+            return;
+        }
+        cidade.exibirStatus();
     }
 
     private void exibirSobre() {

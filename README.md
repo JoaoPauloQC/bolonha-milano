@@ -12,10 +12,14 @@ javac -encoding UTF-8 -d bin src/bolonhaemilano/*.java
 java -cp bin bolonhaemilano.Main
 ```
 
-## Estado atual (Etapa 1)
+## Estado atual (Etapa 2)
 
-Menu principal em laço com 3 opções (Novo jogo, Sobre o jogo, Sair). Entradas inválidas
-(texto ou número fora da lista) são tratadas sem travar o programa.
+- **Etapa 1:** menu principal em laço; entradas inválidas não travam o programa.
+- **Etapa 2:** classes `Jogador` (começa como Cavaleiro) e `Cidade` (começa em 1400).
+  "Novo jogo" pergunta os nomes e cria os objetos; "Ver status da cidade" mostra os dados
+  (ou avisa que nenhum jogo foi iniciado).
+
+Menu: `1` Novo jogo · `2` Ver status da cidade · `3` Sobre o jogo · `0` Sair.
 
 ## Organização das pastas
 
@@ -23,4 +27,4 @@ Menu principal em laço com 3 opções (Novo jogo, Sobre o jogo, Sair). Entradas
 |-------|----------|
 | `src/bolonhaemilano/` | Código-fonte Java (pacote `bolonhaemilano`) |
 | `uml/` | Diagrama de classes (`.puml` + imagem `.png`) |
-| `casos-de-uso/` | Diagrama de casos de uso (a partir da Etapa 2) |
+| `casos-de-uso/` | Diagrama de casos de uso (`.puml` + imagem `.png`) |
