@@ -12,14 +12,17 @@ javac -encoding UTF-8 -d bin src/bolonhaemilano/*.java
 java -cp bin bolonhaemilano.Main
 ```
 
-## Estado atual (Etapa 2)
+## Estado atual (Etapa 3)
 
 - **Etapa 1:** menu principal em laço; entradas inválidas não travam o programa.
 - **Etapa 2:** classes `Jogador` (começa como Cavaleiro) e `Cidade` (começa em 1400).
   "Novo jogo" pergunta os nomes e cria os objetos; "Ver status da cidade" mostra os dados
   (ou avisa que nenhum jogo foi iniciado).
+- **Etapa 3:** a cidade ganha florins (1000), terras (10000 ha) e grãos (500). Nova classe
+  `Mercado`: compra/venda de grãos (2 florins cada) e terras (1 florim/ha). Nenhum recurso
+  fica negativo.
 
-Menu: `1` Novo jogo · `2` Ver status da cidade · `3` Sobre o jogo · `0` Sair.
+Menu: `1` Novo jogo · `2` Ver status da cidade · `3` Mercado · `4` Sobre o jogo · `0` Sair.
 
 ## Organização das pastas
 

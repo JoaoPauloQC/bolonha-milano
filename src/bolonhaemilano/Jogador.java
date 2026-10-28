@@ -20,4 +20,8 @@ public class Jogador {
     public String getTitulo() {
         return titulo;
     }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 }
