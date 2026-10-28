@@ -54,5 +54,23 @@ public class Menu{
     public void exibirSobre(){
         System.out.println("Bolonha e Milano é um projeto para a matéria de Teoria e Desenvolvimento de Sistemas no quarto bimestre.");
     }
+    public void abrirMercado(){
+        
+    }
+    public int lerQuantidade(){
+        return 0;
+    }
+    public void comprarGraos(){
+
+    }
+    public void venderGraos(){
+
+    }
+    public void comprarTerras(){
+
+    }
+    public void venderTerras(){
+
+    }
 
 }
