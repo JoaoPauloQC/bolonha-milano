@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 3)
+title Bolonha e Milano - Diagrama de classes (Etapa 4)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -14,6 +14,7 @@ class Menu {
   - jogador: Jogador
   - cidade: Cidade
   - mercado: Mercado
+  - agricultura: Agricultura
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
@@ -26,6 +27,9 @@ class Menu {
   - venderGraos(): void
   - comprarTerras(): void
   - venderTerras(): void
+  - abrirAgricultura(): void
+  - colher(): void
+  - distribuirAlimentos(): void
   - exibirSobre(): void
 }
 
@@ -45,6 +49,7 @@ class Cidade {
   - florins: int
   - terras: int
   - graos: int
+  - servos: int
   + Cidade(nome: String, dono: Jogador)
   + getNome(): String
   + getAnoAtual(): int
@@ -52,6 +57,7 @@ class Cidade {
   + getFlorins(): int
   + getTerras(): int
   + getGraos(): int
+  + getServos(): int
   + avancarAno(): void
   + adicionarFlorins(qtd: int): void
   + removerFlorins(qtd: int): boolean
@@ -59,6 +65,8 @@ class Cidade {
   + removerTerras(qtd: int): boolean
   + adicionarGraos(qtd: int): void
   + removerGraos(qtd: int): boolean
+  + adicionarServos(qtd: int): void
+  + removerServos(qtd: int): boolean
   + exibirStatus(): void
 }
 
@@ -73,10 +81,23 @@ class Mercado {
   + venderTerras(cidade: Cidade, qtd: int): boolean
 }
 
+class Agricultura {
+  - {static} HECTARES_POR_SERVO: int = 5
+  - {static} RENDIMENTO_POR_HECTARE: int = 2
+  - {static} SERVOS_POR_GRAO: int = 5
+  - {static} CRESCIMENTO_PERCENTUAL: int = 5
+  - {static} PERCENTUAL_MINIMO: int = 20
+  - {static} PERCENTUAL_MAXIMO: int = 80
+  + processarColheita(cidade: Cidade): int
+  + distribuirAlimentos(cidade: Cidade, percentual: int): boolean
+}
+
 Main ..> Menu : cria e usa
 Menu --> "0..1" Jogador
 Menu --> "0..1" Cidade
 Menu --> "1" Mercado
+Menu --> "1" Agricultura
 Cidade --> "1" Jogador : dono
 Mercado ..> Cidade : usa
+Agricultura ..> Cidade : usa
 @enduml
