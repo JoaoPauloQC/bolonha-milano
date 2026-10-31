@@ -2,7 +2,7 @@ package bolonhaemilano;
 
 /**
  * O que e governado: a cidade-Estado, com seu ano atual, o jogador dono
- * e os recursos da economia (florins, terras e graos).
+ * e os recursos da economia (florins, terras, graos e servos).
  *
  * Padrao seguro: adicionar* sempre funciona; remover* devolve false (e nao
  * altera nada) se nao houver quantidade suficiente. Nenhum recurso fica negativo.
@@ -15,6 +15,7 @@ public class Cidade {
     private int florins;
     private int terras;
     private int graos;
+    private int servos;
 
     public Cidade(String nome, Jogador dono) {
         this.nome = nome;
@@ -23,6 +24,7 @@ public class Cidade {
         this.florins = 1000;
         this.terras = 10000;
         this.graos = 500;
+        this.servos = 200;
     }
 
     public String getNome() {
@@ -47,6 +49,10 @@ public class Cidade {
 
     public int getGraos() {
         return graos;
+    }
+
+    public int getServos() {
+        return servos;
     }
 
     public void avancarAno() {
@@ -98,6 +104,21 @@ public class Cidade {
         return true;
     }
 
+    // ---------- servos ----------
+    public void adicionarServos(int quantidade) {
+        if (quantidade > 0) {
+            servos += quantidade;
+        }
+    }
+
+    public boolean removerServos(int quantidade) {
+        if (quantidade < 0 || quantidade > servos) {
+            return false;
+        }
+        servos -= quantidade;
+        return true;
+    }
+
     public void exibirStatus() {
         System.out.println();
         System.out.println("----------- STATUS DA CIDADE -----------");
@@ -107,5 +128,6 @@ public class Cidade {
         System.out.println("Florins: " + florins);
         System.out.println("Terras: " + terras + " hectares");
         System.out.println("Graos em estoque: " + graos);
+        System.out.println("Servos: " + servos);
     }
 }
