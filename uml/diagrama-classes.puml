@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 4)
+title Bolonha e Milano - Diagrama de classes (Etapa 5)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -15,6 +15,7 @@ class Menu {
   - cidade: Cidade
   - mercado: Mercado
   - agricultura: Agricultura
+  - governo: Governo
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
@@ -30,6 +31,10 @@ class Menu {
   - abrirAgricultura(): void
   - colher(): void
   - distribuirAlimentos(): void
+  - abrirGoverno(): void
+  - arrecadarImpostos(): void
+  - definirTaxaImposto(): void
+  - definirJustica(): void
   - exibirSobre(): void
 }
 
@@ -50,6 +55,8 @@ class Cidade {
   - terras: int
   - graos: int
   - servos: int
+  - taxaImposto: int
+  - nivelJustica: String
   + Cidade(nome: String, dono: Jogador)
   + getNome(): String
   + getAnoAtual(): int
@@ -58,6 +65,10 @@ class Cidade {
   + getTerras(): int
   + getGraos(): int
   + getServos(): int
+  + getTaxaImposto(): int
+  + setTaxaImposto(taxa: int): void
+  + getNivelJustica(): String
+  + setNivelJustica(nivel: String): void
   + avancarAno(): void
   + adicionarFlorins(qtd: int): void
   + removerFlorins(qtd: int): boolean
@@ -92,12 +103,25 @@ class Agricultura {
   + distribuirAlimentos(cidade: Cidade, percentual: int): boolean
 }
 
+class Governo {
+  - {static} TAXA_MAXIMA: int = 50
+  - {static} MULTIPLICADOR_JUSTA: double = 0.8
+  - {static} MULTIPLICADOR_MODERADA: double = 1.0
+  - {static} MULTIPLICADOR_SEVERA: double = 1.3
+  + arrecadarImpostos(cidade: Cidade): int
+  + definirTaxaImposto(cidade: Cidade, taxa: int): boolean
+  + definirJustica(cidade: Cidade, nivel: String): boolean
+  - multiplicadorPara(nivel: String): double
+}
+
 Main ..> Menu : cria e usa
 Menu --> "0..1" Jogador
 Menu --> "0..1" Cidade
 Menu --> "1" Mercado
 Menu --> "1" Agricultura
+Menu --> "1" Governo
 Cidade --> "1" Jogador : dono
 Mercado ..> Cidade : usa
 Agricultura ..> Cidade : usa
+Governo ..> Cidade : usa
 @enduml
