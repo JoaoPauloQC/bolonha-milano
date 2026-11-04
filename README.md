@@ -12,7 +12,7 @@ javac -encoding UTF-8 -d bin src/bolonhaemilano/*.java
 java -cp bin bolonhaemilano.Main
 ```
 
-## Estado atual (Etapa 4)
+## Estado atual (Etapa 5)
 
 - **Etapa 1:** menu principal em laço; entradas inválidas não travam o programa.
 - **Etapa 2:** classes `Jogador` (começa como Cavaleiro) e `Cidade` (começa em 1400).
@@ -24,8 +24,12 @@ java -cp bin bolonhaemilano.Main
 - **Etapa 4:** a cidade ganha servos (200). Nova classe `Agricultura`: colher
   (hectares = min(terras, servos × 5); sementes = hectares / 2; produção = hectares × 2) e
   distribuir alimentos (20% a 80% dos grãos; comida suficiente → servos +5%, senão perde o déficit).
+- **Etapa 5:** a cidade ganha taxa de imposto (10%) e nível de justiça (Moderada). Nova classe
+  `Governo`: arrecadar (servos × taxa / 100 × 0,8 Justa / 1,0 Moderada / 1,3 Severa), definir
+  taxa (0 a 50) e definir justiça.
 
-Menu: `1` Novo jogo · `2` Ver status · `3` Mercado · `4` Agricultura · `5` Sobre o jogo · `0` Sair.
+Menu: `1` Novo jogo · `2` Ver status · `3` Mercado · `4` Agricultura · `5` Governo ·
+`6` Sobre o jogo · `0` Sair.
 
 ## Organização das pastas
 

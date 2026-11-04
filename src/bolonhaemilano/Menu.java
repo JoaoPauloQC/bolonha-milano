@@ -14,12 +14,14 @@ public class Menu {
     private Cidade cidade;
     private Mercado mercado;
     private Agricultura agricultura;
+    private Governo governo;
 
     public Menu() {
         scanner = new Scanner(System.in);
         emExecucao = true;
         mercado = new Mercado();
         agricultura = new Agricultura();
+        governo = new Governo();
     }
 
     public void executar() {
@@ -41,7 +43,8 @@ public class Menu {
         System.out.println("2 - Ver status da cidade");
         System.out.println("3 - Mercado");
         System.out.println("4 - Agricultura");
-        System.out.println("5 - Sobre o jogo");
+        System.out.println("5 - Governo");
+        System.out.println("6 - Sobre o jogo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opcao: ");
     }
@@ -73,6 +76,9 @@ public class Menu {
                 abrirAgricultura();
                 break;
             case 5:
+                abrirGoverno();
+                break;
+            case 6:
                 exibirSobre();
                 break;
             case 0:
@@ -255,6 +261,88 @@ public class Menu {
                     + " | Graos restantes: " + cidade.getGraos());
         } else {
             System.out.println("Distribuicao recusada: o percentual deve ficar entre 20 e 80.");
+        }
+    }
+
+    // ===================== GOVERNO (Etapa 5) =====================
+
+    private void abrirGoverno() {
+        if (cidade == null) {
+            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+            return;
+        }
+        boolean noGoverno = true;
+        while (noGoverno) {
+            System.out.println();
+            System.out.println("--------------- GOVERNO ---------------");
+            System.out.println("Florins: " + cidade.getFlorins() + " | Taxa de imposto: " + cidade.getTaxaImposto()
+                    + "% | Justica: " + cidade.getNivelJustica());
+            System.out.println("1 - Arrecadar impostos");
+            System.out.println("2 - Definir taxa de imposto");
+            System.out.println("3 - Definir nivel de justica");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha uma opcao: ");
+            int opcao = lerOpcao();
+            switch (opcao) {
+                case 1:
+                    arrecadarImpostos();
+                    break;
+                case 2:
+                    definirTaxaImposto();
+                    break;
+                case 3:
+                    definirJustica();
+                    break;
+                case 0:
+                    noGoverno = false;
+                    break;
+                default:
+                    System.out.println("Opcao invalida. Tente novamente.");
+                    break;
+            }
+        }
+    }
+
+    private void arrecadarImpostos() {
+        int arrecadado = governo.arrecadarImpostos(cidade);
+        System.out.println("Impostos arrecadados: " + arrecadado + " florins. Florins: " + cidade.getFlorins());
+    }
+
+    private void definirTaxaImposto() {
+        System.out.print("Nova taxa de imposto (0 a 50): ");
+        int taxa = lerOpcao();
+        if (governo.definirTaxaImposto(cidade, taxa)) {
+            System.out.println("Taxa de imposto definida em " + taxa + "%.");
+        } else {
+            System.out.println("Taxa recusada: deve ficar entre 0 e 50.");
+        }
+    }
+
+    private void definirJustica() {
+        System.out.println("1 - Justa (arrecadacao x0,8)");
+        System.out.println("2 - Moderada (arrecadacao x1,0)");
+        System.out.println("3 - Severa (arrecadacao x1,3)");
+        System.out.print("Escolha o nivel de justica: ");
+        int opcao = lerOpcao();
+        String nivel;
+        switch (opcao) {
+            case 1:
+                nivel = "Justa";
+                break;
+            case 2:
+                nivel = "Moderada";
+                break;
+            case 3:
+                nivel = "Severa";
+                break;
+            default:
+                nivel = "";
+                break;
+        }
+        if (governo.definirJustica(cidade, nivel)) {
+            System.out.println("Nivel de justica definido: " + nivel + ".");
+        } else {
+            System.out.println("Opcao invalida: o nivel de justica nao foi alterado.");
         }
     }
 
