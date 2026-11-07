@@ -12,7 +12,7 @@ javac -encoding UTF-8 -d bin src/bolonhaemilano/*.java
 java -cp bin bolonhaemilano.Main
 ```
 
-## Estado atual (Etapa 5)
+## Estado atual (Etapa 6)
 
 - **Etapa 1:** menu principal em laço; entradas inválidas não travam o programa.
 - **Etapa 2:** classes `Jogador` (começa como Cavaleiro) e `Cidade` (começa em 1400).
@@ -27,9 +27,12 @@ java -cp bin bolonhaemilano.Main
 - **Etapa 5:** a cidade ganha taxa de imposto (10%) e nível de justiça (Moderada). Nova classe
   `Governo`: arrecadar (servos × taxa / 100 × 0,8 Justa / 1,0 Moderada / 1,3 Severa), definir
   taxa (0 a 50) e definir justiça.
+- **Etapa 6:** a cidade ganha soldados e construções (0). Nova classe `Construcoes`:
+  recrutar soldados (5 florins + 1 servo cada, validando os dois recursos antes de debitar)
+  e construir (20 florins cada).
 
 Menu: `1` Novo jogo · `2` Ver status · `3` Mercado · `4` Agricultura · `5` Governo ·
-`6` Sobre o jogo · `0` Sair.
+`6` Construções · `7` Sobre o jogo · `0` Sair.
 
 ## Organização das pastas
 

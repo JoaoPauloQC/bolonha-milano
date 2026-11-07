@@ -1,8 +1,9 @@
 package bolonhaemilano;
 
 /**
- * O que e governado: a cidade-Estado, com seu ano atual, o jogador dono
- * e os recursos da economia (florins, terras, graos e servos).
+ * O que e governado: a cidade-Estado, com seu ano atual, o jogador dono,
+ * os recursos (florins, terras, graos, servos, soldados e construcoes)
+ * e as configuracoes de governo (taxa de imposto e nivel de justica).
  *
  * Padrao seguro: adicionar* sempre funciona; remover* devolve false (e nao
  * altera nada) se nao houver quantidade suficiente. Nenhum recurso fica negativo.
@@ -18,6 +19,8 @@ public class Cidade {
     private int servos;
     private int taxaImposto;
     private String nivelJustica;
+    private int soldados;
+    private int construcoes;
 
     public Cidade(String nome, Jogador dono) {
         this.nome = nome;
@@ -29,6 +32,8 @@ public class Cidade {
         this.servos = 200;
         this.taxaImposto = 10;
         this.nivelJustica = "Moderada";
+        this.soldados = 0;
+        this.construcoes = 0;
     }
 
     public String getNome() {
@@ -57,6 +62,14 @@ public class Cidade {
 
     public int getServos() {
         return servos;
+    }
+
+    public int getSoldados() {
+        return soldados;
+    }
+
+    public int getConstrucoes() {
+        return construcoes;
     }
 
     // ---------- configuracoes de governo (getter/setter simples) ----------
@@ -140,6 +153,36 @@ public class Cidade {
         return true;
     }
 
+    // ---------- soldados ----------
+    public void adicionarSoldados(int quantidade) {
+        if (quantidade > 0) {
+            soldados += quantidade;
+        }
+    }
+
+    public boolean removerSoldados(int quantidade) {
+        if (quantidade < 0 || quantidade > soldados) {
+            return false;
+        }
+        soldados -= quantidade;
+        return true;
+    }
+
+    // ---------- construcoes ----------
+    public void adicionarConstrucoes(int quantidade) {
+        if (quantidade > 0) {
+            construcoes += quantidade;
+        }
+    }
+
+    public boolean removerConstrucoes(int quantidade) {
+        if (quantidade < 0 || quantidade > construcoes) {
+            return false;
+        }
+        construcoes -= quantidade;
+        return true;
+    }
+
     public void exibirStatus() {
         System.out.println();
         System.out.println("----------- STATUS DA CIDADE -----------");
@@ -152,5 +195,7 @@ public class Cidade {
         System.out.println("Servos: " + servos);
         System.out.println("Taxa de imposto: " + taxaImposto + "%");
         System.out.println("Nivel de justica: " + nivelJustica);
+        System.out.println("Soldados: " + soldados);
+        System.out.println("Construcoes: " + construcoes);
     }
 }
