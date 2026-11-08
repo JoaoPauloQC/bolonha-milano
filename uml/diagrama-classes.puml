@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 5)
+title Bolonha e Milano - Diagrama de classes (Etapa 6)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -16,6 +16,7 @@ class Menu {
   - mercado: Mercado
   - agricultura: Agricultura
   - governo: Governo
+  - construcoes: Construcoes
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
@@ -35,6 +36,9 @@ class Menu {
   - arrecadarImpostos(): void
   - definirTaxaImposto(): void
   - definirJustica(): void
+  - abrirConstrucoes(): void
+  - recrutarSoldados(): void
+  - construir(): void
   - exibirSobre(): void
 }
 
@@ -57,6 +61,8 @@ class Cidade {
   - servos: int
   - taxaImposto: int
   - nivelJustica: String
+  - soldados: int
+  - construcoes: int
   + Cidade(nome: String, dono: Jogador)
   + getNome(): String
   + getAnoAtual(): int
@@ -65,6 +71,8 @@ class Cidade {
   + getTerras(): int
   + getGraos(): int
   + getServos(): int
+  + getSoldados(): int
+  + getConstrucoes(): int
   + getTaxaImposto(): int
   + setTaxaImposto(taxa: int): void
   + getNivelJustica(): String
@@ -78,6 +86,10 @@ class Cidade {
   + removerGraos(qtd: int): boolean
   + adicionarServos(qtd: int): void
   + removerServos(qtd: int): boolean
+  + adicionarSoldados(qtd: int): void
+  + removerSoldados(qtd: int): boolean
+  + adicionarConstrucoes(qtd: int): void
+  + removerConstrucoes(qtd: int): boolean
   + exibirStatus(): void
 }
 
@@ -114,14 +126,26 @@ class Governo {
   - multiplicadorPara(nivel: String): double
 }
 
+class Construcoes {
+  - {static} PRECO_SOLDADO: int = 5
+  - {static} SERVOS_POR_SOLDADO: int = 1
+  - {static} PRECO_CONSTRUCAO: int = 20
+  + getPrecoSoldado(): int
+  + getPrecoConstrucao(): int
+  + recrutarSoldados(cidade: Cidade, qtd: int): boolean
+  + construir(cidade: Cidade, qtd: int): boolean
+}
+
 Main ..> Menu : cria e usa
 Menu --> "0..1" Jogador
 Menu --> "0..1" Cidade
 Menu --> "1" Mercado
 Menu --> "1" Agricultura
 Menu --> "1" Governo
+Menu --> "1" Construcoes
 Cidade --> "1" Jogador : dono
 Mercado ..> Cidade : usa
 Agricultura ..> Cidade : usa
 Governo ..> Cidade : usa
+Construcoes ..> Cidade : usa
 @enduml
