@@ -1,17 +1,19 @@
 @startuml diagrama-casos-de-uso
 !pragma layout smetana
-title Bolonha e Milano - Casos de uso (Etapa 6)
-left to right direction
+title Bolonha e Milano - Casos de uso (Etapa 7)
+top to bottom direction
 
 actor Jogador
 
 rectangle "Bolonha e Milano" {
-  usecase "Iniciar novo jogo" as UC1
+  usecase "Iniciar novo jogo\n(1 a 4 jogadores)" as UC1
   usecase "Ver status da cidade" as UC2
   usecase "Acessar mercado" as UC3
   usecase "Acessar agricultura" as UC4
   usecase "Acessar governo" as UC5
   usecase "Acessar construcoes" as UC6
+  usecase "Encerrar turno" as UC7
+  usecase "Ver classificacao" as UC8
   usecase "Ver informacoes sobre o jogo" as UC9
   usecase "Sair do jogo" as UC10
 
@@ -20,15 +22,18 @@ rectangle "Bolonha e Milano" {
   usecase "Comprar terras" as M3
   usecase "Vender terras" as M4
 
-  usecase "Colher (processar safra)" as A1
+  usecase "Colher (processar safra)\n1 vez por ano" as A1
   usecase "Distribuir alimentos" as A2
 
-  usecase "Arrecadar impostos" as G1
+  usecase "Arrecadar impostos\n1 vez por ano" as G1
   usecase "Definir taxa de imposto" as G2
   usecase "Definir nivel de justica" as G3
 
   usecase "Recrutar soldados" as C1
   usecase "Construir" as C2
+
+  usecase "Fechar o ano\n(promover titulos)" as T1
+  usecase "Declarar vencedor" as T2
 }
 
 Jogador --> UC1
@@ -37,6 +42,8 @@ Jogador --> UC3
 Jogador --> UC4
 Jogador --> UC5
 Jogador --> UC6
+Jogador --> UC7
+Jogador --> UC8
 Jogador --> UC9
 Jogador --> UC10
 UC1 ..> UC2 : <<include>>
@@ -55,4 +62,7 @@ G3 ..> UC5 : <<extend>>
 
 C1 ..> UC6 : <<extend>>
 C2 ..> UC6 : <<extend>>
+
+T1 ..> UC7 : <<extend>>\n[ultimo jogador da rodada]
+T2 ..> T1 : <<extend>>\n[alguem virou Rei/Rainha\nou 1410 acabou]
 @enduml

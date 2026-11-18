@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 6)
+title Bolonha e Milano - Diagrama de classes (Etapa 7)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -9,14 +9,16 @@ class Main {
 }
 
 class Menu {
+  - {static} CIDADES_SUGERIDAS: String[]
   - scanner: Scanner
   - emExecucao: boolean
-  - jogador: Jogador
+  - partida: Partida
   - cidade: Cidade
   - mercado: Mercado
   - agricultura: Agricultura
   - governo: Governo
   - construcoes: Construcoes
+  - nobreza: Nobreza
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
@@ -39,16 +41,39 @@ class Menu {
   - abrirConstrucoes(): void
   - recrutarSoldados(): void
   - construir(): void
+  - encerrarTurno(): void
+  - exibirClassificacao(): void
+  - encerrarPartida(): void
   - exibirSobre(): void
 }
 
+class Partida {
+  + {static} MAXIMO_JOGADORES: int = 4
+  - {static} ANO_FINAL: int = 1410
+  - cidades: List<Cidade>
+  - indiceAtual: int
+  + adicionarCidade(cidade: Cidade): boolean
+  + getCidades(): List<Cidade>
+  + getCidadeAtual(): Cidade
+  + getAnoAtual(): int
+  + getAnoFinal(): int
+  + passarTurno(): boolean
+  + encerrarAno(nobreza: Nobreza): List<Cidade>
+  + terminou(): boolean
+  + determinarVencedor(nobreza: Nobreza): Cidade
+  - estaNaFrente(a: Cidade, b: Cidade, nobreza: Nobreza): boolean
+}
+
 class Jogador {
+  - {static} TITULOS: String[]
   - nome: String
-  - titulo: String
+  - nivelTitulo: int
   + Jogador(nome: String)
   + getNome(): String
   + getTitulo(): String
-  + setTitulo(titulo: String): void
+  + getNivelTitulo(): int
+  + promover(): boolean
+  + ehMonarca(): boolean
 }
 
 class Cidade {
@@ -63,6 +88,8 @@ class Cidade {
   - nivelJustica: String
   - soldados: int
   - construcoes: int
+  - colheitaFeita: boolean
+  - impostosArrecadados: boolean
   + Cidade(nome: String, dono: Jogador)
   + getNome(): String
   + getAnoAtual(): int
@@ -78,6 +105,10 @@ class Cidade {
   + getNivelJustica(): String
   + setNivelJustica(nivel: String): void
   + avancarAno(): void
+  + isColheitaFeita(): boolean
+  + marcarColheitaFeita(): void
+  + isImpostosArrecadados(): boolean
+  + marcarImpostosArrecadados(): void
   + adicionarFlorins(qtd: int): void
   + removerFlorins(qtd: int): boolean
   + adicionarTerras(qtd: int): void
@@ -114,6 +145,7 @@ class Agricultura {
   + processarColheita(cidade: Cidade): int
   + distribuirAlimentos(cidade: Cidade, percentual: int): boolean
 }
+note bottom of Agricultura : processarColheita devolve -1\nse a cidade ja colheu no ano
 
 class Governo {
   - {static} TAXA_MAXIMA: int = 50
@@ -125,6 +157,7 @@ class Governo {
   + definirJustica(cidade: Cidade, nivel: String): boolean
   - multiplicadorPara(nivel: String): double
 }
+note bottom of Governo : arrecadarImpostos devolve -1\nse a cidade ja arrecadou no ano
 
 class Construcoes {
   - {static} PRECO_SOLDADO: int = 5
@@ -136,16 +169,32 @@ class Construcoes {
   + construir(cidade: Cidade, qtd: int): boolean
 }
 
+class Nobreza {
+  - {static} PESO_CONSTRUCAO: int = 10
+  - {static} PESO_SOLDADO: int = 2
+  - {static} PESO_SERVO: int = 1
+  - {static} HECTARES_POR_PONTO: int = 100
+  - {static} PRESTIGIO_MINIMO: int[] = {0, 400, 550, 700, 850, 1000}
+  + calcularPrestigio(cidade: Cidade): int
+  + prestigioParaProximoTitulo(jogador: Jogador): int
+  + verificarPromocao(cidade: Cidade): boolean
+}
+
 Main ..> Menu : cria e usa
-Menu --> "0..1" Jogador
-Menu --> "0..1" Cidade
+Menu --> "0..1" Partida
+Menu --> "0..1" Cidade : vez atual
 Menu --> "1" Mercado
 Menu --> "1" Agricultura
 Menu --> "1" Governo
 Menu --> "1" Construcoes
+Menu --> "1" Nobreza
+Partida o--> "1..4" Cidade : cidades
 Cidade --> "1" Jogador : dono
+Partida ..> Nobreza : usa
 Mercado ..> Cidade : usa
 Agricultura ..> Cidade : usa
 Governo ..> Cidade : usa
 Construcoes ..> Cidade : usa
+Nobreza ..> Cidade : usa
+Nobreza ..> Jogador : promove
 @enduml
