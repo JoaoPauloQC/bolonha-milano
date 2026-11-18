@@ -13,13 +13,18 @@ public class Governo {
 
     /**
      * base = servos x taxa / 100; arrecadado = base x multiplicador da justica.
-     * Devolve quantos florins foram arrecadados.
+     * Devolve quantos florins foram arrecadados, ou -1 se a cidade ja
+     * arrecadou neste ano (nada e alterado).
      */
     public int arrecadarImpostos(Cidade cidade) {
+        if (cidade.isImpostosArrecadados()) {
+            return -1;
+        }
         int base = cidade.getServos() * cidade.getTaxaImposto() / 100;
         double multiplicador = multiplicadorPara(cidade.getNivelJustica());
         int arrecadado = (int) (base * multiplicador);
         cidade.adicionarFlorins(arrecadado);
+        cidade.marcarImpostosArrecadados();
         return arrecadado;
     }
 

@@ -1,16 +1,21 @@
 package bolonhaemilano;
 
 /**
- * Quem governa a cidade: nome e titulo de nobreza.
+ * Quem governa a cidade: nome e nivel do titulo de nobreza.
+ * O Jogador sabe a ORDEM dos titulos; quem decide QUANDO promover e a Nobreza.
  */
 public class Jogador {
 
+    private static final String[] TITULOS = {
+        "Cavaleiro", "Barao", "Conde", "Marques", "Duque", "Rei/Rainha"
+    };
+
     private String nome;
-    private String titulo;
+    private int nivelTitulo;
 
     public Jogador(String nome) {
         this.nome = nome;
-        this.titulo = "Cavaleiro";
+        this.nivelTitulo = 0; // Cavaleiro
     }
 
     public String getNome() {
@@ -18,10 +23,25 @@ public class Jogador {
     }
 
     public String getTitulo() {
-        return titulo;
+        return TITULOS[nivelTitulo];
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public int getNivelTitulo() {
+        return nivelTitulo;
+    }
+
+    /**
+     * Sobe um titulo. Devolve false se ja e Rei/Rainha.
+     */
+    public boolean promover() {
+        if (ehMonarca()) {
+            return false;
+        }
+        nivelTitulo++;
+        return true;
+    }
+
+    public boolean ehMonarca() {
+        return nivelTitulo == TITULOS.length - 1;
     }
 }

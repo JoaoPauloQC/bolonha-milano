@@ -21,6 +21,8 @@ public class Cidade {
     private String nivelJustica;
     private int soldados;
     private int construcoes;
+    private boolean colheitaFeita;
+    private boolean impostosArrecadados;
 
     public Cidade(String nome, Jogador dono) {
         this.nome = nome;
@@ -34,6 +36,8 @@ public class Cidade {
         this.nivelJustica = "Moderada";
         this.soldados = 0;
         this.construcoes = 0;
+        this.colheitaFeita = false;
+        this.impostosArrecadados = false;
     }
 
     public String getNome() {
@@ -89,8 +93,30 @@ public class Cidade {
         this.nivelJustica = nivelJustica;
     }
 
+    /**
+     * Soma 1 ao ano e libera de novo a colheita e a arrecadacao.
+     */
     public void avancarAno() {
         anoAtual++;
+        colheitaFeita = false;
+        impostosArrecadados = false;
+    }
+
+    // ---------- indicadores do ano (Etapa 7) ----------
+    public boolean isColheitaFeita() {
+        return colheitaFeita;
+    }
+
+    public void marcarColheitaFeita() {
+        colheitaFeita = true;
+    }
+
+    public boolean isImpostosArrecadados() {
+        return impostosArrecadados;
+    }
+
+    public void marcarImpostosArrecadados() {
+        impostosArrecadados = true;
     }
 
     // ---------- florins ----------
@@ -197,5 +223,7 @@ public class Cidade {
         System.out.println("Nivel de justica: " + nivelJustica);
         System.out.println("Soldados: " + soldados);
         System.out.println("Construcoes: " + construcoes);
+        System.out.println("Colheita deste ano: " + (colheitaFeita ? "feita" : "pendente"));
+        System.out.println("Impostos deste ano: " + (impostosArrecadados ? "arrecadados" : "pendentes"));
     }
 }

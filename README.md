@@ -12,7 +12,7 @@ javac -encoding UTF-8 -d bin src/bolonhaemilano/*.java
 java -cp bin bolonhaemilano.Main
 ```
 
-## Estado atual (Etapa 6)
+## Estado atual (Etapa 7)
 
 - **Etapa 1:** menu principal em laço; entradas inválidas não travam o programa.
 - **Etapa 2:** classes `Jogador` (começa como Cavaleiro) e `Cidade` (começa em 1400).
@@ -30,9 +30,15 @@ java -cp bin bolonhaemilano.Main
 - **Etapa 6:** a cidade ganha soldados e construções (0). Nova classe `Construcoes`:
   recrutar soldados (5 florins + 1 servo cada, validando os dois recursos antes de debitar)
   e construir (20 florins cada).
+- **Etapa 7:** partida de verdade. Nova classe `Partida` (1 a 4 jogadores: Bolonha, Milano,
+  Florença, Veneza) com turnos e rodadas anuais; colher e arrecadar valem uma vez por ano.
+  Nova classe `Nobreza`: prestígio = construções × 10 + soldados × 2 + servos + terras / 100;
+  títulos Cavaleiro → Barão (400) → Conde (550) → Marquês (700) → Duque (850) → Rei/Rainha (1000),
+  no máximo um por ano. Fim: alguém vira Rei/Rainha ou acaba 1410 (vence o título mais alto;
+  empate, maior prestígio).
 
 Menu: `1` Novo jogo · `2` Ver status · `3` Mercado · `4` Agricultura · `5` Governo ·
-`6` Construções · `7` Sobre o jogo · `0` Sair.
+`6` Construções · `7` Encerrar turno · `8` Ver classificação · `9` Sobre o jogo · `0` Sair.
 
 ## Organização das pastas
 

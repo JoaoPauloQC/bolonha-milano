@@ -1,21 +1,27 @@
 package bolonhaemilano;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Controla o laco principal do jogo: exibe as opcoes, le e valida a escolha
- * do jogador e delega o trabalho para as outras classes.
+ * do jogador e delega o trabalho para as outras classes. Guarda a Partida e
+ * a cidade de quem esta jogando (a cidade da vez).
  */
 public class Menu {
 
+    private static final String[] CIDADES_SUGERIDAS = {"Bolonha", "Milano", "Florenca", "Veneza"};
+
     private Scanner scanner;
     private boolean emExecucao;
-    private Jogador jogador;
+    private Partida partida;
     private Cidade cidade;
     private Mercado mercado;
     private Agricultura agricultura;
     private Governo governo;
     private Construcoes construcoes;
+    private Nobreza nobreza;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -24,6 +30,7 @@ public class Menu {
         agricultura = new Agricultura();
         governo = new Governo();
         construcoes = new Construcoes();
+        nobreza = new Nobreza();
     }
 
     public void executar() {
@@ -41,13 +48,20 @@ public class Menu {
         System.out.println("             BOLONHA E MILANO");
         System.out.println("  Um jogo de estrategia economica medieval");
         System.out.println("==========================================");
+        if (partida != null) {
+            System.out.println("Ano " + partida.getAnoAtual() + " | Vez de " + cidade.getDono().getNome()
+                    + " (" + cidade.getDono().getTitulo() + "), de " + cidade.getNome());
+            System.out.println("------------------------------------------");
+        }
         System.out.println("1 - Novo jogo");
         System.out.println("2 - Ver status da cidade");
         System.out.println("3 - Mercado");
         System.out.println("4 - Agricultura");
         System.out.println("5 - Governo");
         System.out.println("6 - Construcoes");
-        System.out.println("7 - Sobre o jogo");
+        System.out.println("7 - Encerrar turno");
+        System.out.println("8 - Ver classificacao");
+        System.out.println("9 - Sobre o jogo");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opcao: ");
     }
@@ -85,6 +99,12 @@ public class Menu {
                 abrirConstrucoes();
                 break;
             case 7:
+                encerrarTurno();
+                break;
+            case 8:
+                exibirClassificacao();
+                break;
+            case 9:
                 exibirSobre();
                 break;
             case 0:
@@ -98,25 +118,39 @@ public class Menu {
     }
 
     private void iniciarNovoJogo() {
-        System.out.print("Digite o nome do jogador: ");
-        String nomeJogador = scanner.nextLine().trim();
-        if (nomeJogador.isEmpty()) {
-            nomeJogador = "Jogador 1";
-        }
-        System.out.print("Digite o nome da cidade: ");
-        String nomeCidade = scanner.nextLine().trim();
-        if (nomeCidade.isEmpty()) {
-            nomeCidade = "Bolonha";
+        System.out.print("Quantos jogadores (1 a " + Partida.MAXIMO_JOGADORES + ")? ");
+        int quantidade = lerOpcao();
+        if (quantidade < 1 || quantidade > Partida.MAXIMO_JOGADORES) {
+            quantidade = 2;
+            System.out.println("Quantidade invalida: a partida tera 2 jogadores.");
         }
 
-        jogador = new Jogador(nomeJogador);
-        cidade = new Cidade(nomeCidade, jogador);
-        System.out.println("Novo jogo iniciado!");
-        cidade.exibirStatus();
+        partida = new Partida();
+        for (int i = 0; i < quantidade; i++) {
+            System.out.print("Nome do jogador " + (i + 1) + ": ");
+            String nomeJogador = scanner.nextLine().trim();
+            if (nomeJogador.isEmpty()) {
+                nomeJogador = "Jogador " + (i + 1);
+            }
+            String sugerida = CIDADES_SUGERIDAS[i];
+            System.out.print("Nome da cidade de " + nomeJogador + " (Enter = " + sugerida + "): ");
+            String nomeCidade = scanner.nextLine().trim();
+            if (nomeCidade.isEmpty()) {
+                nomeCidade = sugerida;
+            }
+            partida.adicionarCidade(new Cidade(nomeCidade, new Jogador(nomeJogador)));
+        }
+
+        cidade = partida.getCidadeAtual();
+        System.out.println();
+        System.out.println("Novo jogo iniciado! Ano " + partida.getAnoAtual() + ". A partida vai ate");
+        System.out.println("o fim de " + partida.getAnoFinal() + " ou ate alguem virar Rei/Rainha.");
+        System.out.println("Comeca: " + cidade.getDono().getNome() + " (" + cidade.getDono().getTitulo()
+                + "), de " + cidade.getNome() + ".");
     }
 
     private void exibirStatus() {
-        if (cidade == null) {
+        if (partida == null) {
             System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
             return;
         }
@@ -126,7 +160,7 @@ public class Menu {
     // ===================== MERCADO (Etapa 3) =====================
 
     private void abrirMercado() {
-        if (cidade == null) {
+        if (partida == null) {
             System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
             return;
         }
@@ -220,7 +254,7 @@ public class Menu {
     // ===================== AGRICULTURA (Etapa 4) =====================
 
     private void abrirAgricultura() {
-        if (cidade == null) {
+        if (partida == null) {
             System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
             return;
         }
@@ -254,6 +288,10 @@ public class Menu {
 
     private void colher() {
         int hectares = agricultura.processarColheita(cidade);
+        if (hectares == -1) {
+            System.out.println("A colheita deste ano ja foi feita. Aguarde o proximo ano.");
+            return;
+        }
         System.out.println("Colheita feita: " + hectares + " hectares cultivados. Graos em estoque: "
                 + cidade.getGraos());
     }
@@ -273,7 +311,7 @@ public class Menu {
     // ===================== GOVERNO (Etapa 5) =====================
 
     private void abrirGoverno() {
-        if (cidade == null) {
+        if (partida == null) {
             System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
             return;
         }
@@ -311,6 +349,10 @@ public class Menu {
 
     private void arrecadarImpostos() {
         int arrecadado = governo.arrecadarImpostos(cidade);
+        if (arrecadado == -1) {
+            System.out.println("Os impostos deste ano ja foram arrecadados. Aguarde o proximo ano.");
+            return;
+        }
         System.out.println("Impostos arrecadados: " + arrecadado + " florins. Florins: " + cidade.getFlorins());
     }
 
@@ -355,7 +397,7 @@ public class Menu {
     // ===================== CONSTRUCOES (Etapa 6) =====================
 
     private void abrirConstrucoes() {
-        if (cidade == null) {
+        if (partida == null) {
             System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
             return;
         }
@@ -405,11 +447,85 @@ public class Menu {
         }
     }
 
+    // ===================== RODADAS E VITORIA (Etapa 7) =====================
+
+    private void encerrarTurno() {
+        if (partida == null) {
+            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+            return;
+        }
+        System.out.println("Turno de " + cidade.getDono().getNome() + " encerrado.");
+        int anoQueTerminou = partida.getAnoAtual();
+        boolean fimDoAno = partida.passarTurno();
+
+        if (fimDoAno) {
+            List<Cidade> promovidas = partida.encerrarAno(nobreza);
+            System.out.println();
+            System.out.println("========= FIM DO ANO " + anoQueTerminou + " =========");
+            for (Cidade promovida : promovidas) {
+                System.out.println(promovida.getDono().getNome() + ", de " + promovida.getNome()
+                        + ", agora e " + promovida.getDono().getTitulo() + "!");
+            }
+            exibirClassificacao();
+            if (partida.terminou()) {
+                encerrarPartida();
+                return;
+            }
+            System.out.println("Comeca o ano " + partida.getAnoAtual() + ".");
+        }
+
+        cidade = partida.getCidadeAtual();
+        System.out.println("Agora e a vez de " + cidade.getDono().getNome() + " (" + cidade.getDono().getTitulo()
+                + "), de " + cidade.getNome() + ".");
+    }
+
+    private void exibirClassificacao() {
+        if (partida == null) {
+            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+            return;
+        }
+        // ordena uma copia da lista: titulo mais alto primeiro; empate, maior prestigio
+        List<Cidade> ordem = new ArrayList<>(partida.getCidades());
+        ordem.sort((a, b) -> {
+            int nivel = b.getDono().getNivelTitulo() - a.getDono().getNivelTitulo();
+            if (nivel != 0) {
+                return nivel;
+            }
+            return nobreza.calcularPrestigio(b) - nobreza.calcularPrestigio(a);
+        });
+
+        System.out.println("----------- CLASSIFICACAO -----------");
+        for (Cidade c : ordem) {
+            int necessario = nobreza.prestigioParaProximoTitulo(c.getDono());
+            String meta = necessario == -1 ? "titulo maximo" : "proximo titulo com " + necessario;
+            System.out.println(c.getNome() + " | " + c.getDono().getNome() + " (" + c.getDono().getTitulo()
+                    + ") | prestigio " + nobreza.calcularPrestigio(c) + " (" + meta + ")");
+        }
+    }
+
+    private void encerrarPartida() {
+        Cidade vencedora = partida.determinarVencedor(nobreza);
+        System.out.println();
+        System.out.println("============ FIM DE JOGO ============");
+        System.out.println("Vencedor: " + vencedora.getDono().getNome() + " (" + vencedora.getDono().getTitulo()
+                + "), de " + vencedora.getNome() + ", com prestigio " + nobreza.calcularPrestigio(vencedora) + "!");
+        System.out.println("Escolha 'Novo jogo' para jogar de novo.");
+        partida = null;
+        cidade = null;
+    }
+
     private void exibirSobre() {
         System.out.println();
         System.out.println("Bolonha e Milano e um jogo de estrategia economica e politica");
-        System.out.println("ambientado na Italia medieval. Cada jogador governa uma");
-        System.out.println("cidade-Estado e decide como usar seus recursos para desenvolver");
-        System.out.println("o territorio e conquistar titulos de nobreza, ate Rei ou Rainha.");
+        System.out.println("ambientado na Italia medieval. De 1 a 4 jogadores governam suas");
+        System.out.println("cidades-Estado, um turno por vez; quando o ultimo encerra o turno,");
+        System.out.println("o ano fecha e quem tem prestigio suficiente sobe um titulo.");
+        System.out.println();
+        System.out.println("Titulos: Cavaleiro -> Barao (400) -> Conde (550) -> Marques (700)");
+        System.out.println("         -> Duque (850) -> Rei/Rainha (1000)");
+        System.out.println("Prestigio = construcoes x 10 + soldados x 2 + servos + terras / 100");
+        System.out.println("Colher e arrecadar impostos: uma vez por ano por cidade.");
+        System.out.println("Fim: quando alguem vira Rei/Rainha ou ao fim de 1410. Vence o titulo");
+        System.out.println("mais alto (empate: maior prestigio).");
     }
 }

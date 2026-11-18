@@ -14,9 +14,13 @@ public class Agricultura {
     private static final int PERCENTUAL_MAXIMO = 80;
 
     /**
-     * Colhe a safra do ano. Devolve quantos hectares foram cultivados.
+     * Colhe a safra do ano. Devolve quantos hectares foram cultivados,
+     * ou -1 se a cidade ja colheu neste ano (nada e alterado).
      */
     public int processarColheita(Cidade cidade) {
+        if (cidade.isColheitaFeita()) {
+            return -1;
+        }
         int hectares = Math.min(cidade.getTerras(), cidade.getServos() * HECTARES_POR_SERVO);
         int sementes = hectares / 2;
         if (sementes > cidade.getGraos()) {
@@ -27,6 +31,7 @@ public class Agricultura {
         cidade.removerGraos(sementes);
         int producao = hectares * RENDIMENTO_POR_HECTARE;
         cidade.adicionarGraos(producao);
+        cidade.marcarColheitaFeita();
         return hectares;
     }
 
