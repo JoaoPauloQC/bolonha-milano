@@ -1,6 +1,6 @@
 @startuml diagrama-casos-de-uso
 !pragma layout smetana
-title Bolonha e Milano - Casos de uso (Etapa 7)
+title Bolonha e Milano - Casos de uso (Etapa 8 - final)
 top to bottom direction
 
 actor Jogador

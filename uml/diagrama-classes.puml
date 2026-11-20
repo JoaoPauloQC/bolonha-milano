@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 7)
+title Bolonha e Milano - Diagrama de classes (Etapa 8 - final)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -22,6 +22,8 @@ class Menu {
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
+  - lerInteiro(): int
+  - exigirJogoEmAndamento(): boolean
   - processarOpcao(opcao: int): void
   - iniciarNovoJogo(): void
   - exibirStatus(): void
@@ -180,6 +182,25 @@ class Nobreza {
   + verificarPromocao(cidade: Cidade): boolean
 }
 
+class Testes {
+  - {static} aprovados: int
+  - {static} reprovados: int
+  + {static} main(args: String[]): void
+  - {static} verificar(descricao: String, condicao: boolean): void
+  - {static} novaCidade(): Cidade
+  - {static} testarCidade(): void
+  - {static} testarMercado(): void
+  - {static} testarAgricultura(): void
+  - {static} testarGoverno(): void
+  - {static} testarConstrucoes(): void
+  - {static} testarJogadorENobreza(): void
+  - {static} testarPartida(): void
+}
+note top of Testes
+  Segundo main: testa as regras.
+  Nenhuma classe do jogo conhece Testes.
+end note
+
 Main ..> Menu : cria e usa
 Menu --> "0..1" Partida
 Menu --> "0..1" Cidade : vez atual
@@ -197,4 +218,12 @@ Governo ..> Cidade : usa
 Construcoes ..> Cidade : usa
 Nobreza ..> Cidade : usa
 Nobreza ..> Jogador : promove
+Testes ..> Cidade : testa
+Testes ..> Mercado : testa
+Testes ..> Agricultura : testa
+Testes ..> Governo : testa
+Testes ..> Construcoes : testa
+Testes ..> Nobreza : testa
+Testes ..> Partida : testa
+Testes ..> Jogador : testa
 @enduml

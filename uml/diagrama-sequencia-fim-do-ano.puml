@@ -1,0 +1,59 @@
+@startuml diagrama-sequencia-fim-do-ano
+title Bolonha e Milano - Sequencia: fim do ano\n(o ULTIMO jogador da rodada escolhe "Encerrar turno")
+autonumber
+skinparam sequenceMessageAlign center
+
+actor Jogador
+participant ":Menu" as Menu
+participant ":Partida" as Partida
+participant ":Cidade" as Cidade
+participant ":Nobreza" as Nobreza
+participant "dono:Jogador" as Dono
+
+Jogador -> Menu : opcao 7 (Encerrar turno)
+activate Menu
+Menu -> Partida : passarTurno()
+activate Partida
+Partida --> Menu : true (fim do ano)
+deactivate Partida
+
+Menu -> Partida : encerrarAno(nobreza)
+activate Partida
+loop para cada cidade
+  Partida -> Cidade : avancarAno()
+  activate Cidade
+  Cidade --> Partida
+  deactivate Cidade
+  Partida -> Nobreza : verificarPromocao(cidade)
+  activate Nobreza
+  Nobreza -> Cidade : getDono()
+  Nobreza -> Nobreza : prestigioParaProximoTitulo(dono)\ncalcularPrestigio(cidade)
+  alt prestigio suficiente
+    Nobreza -> Dono : promover()
+    activate Dono
+    Dono --> Nobreza : true
+    deactivate Dono
+  end
+  Nobreza --> Partida : true / false
+  deactivate Nobreza
+end
+Partida --> Menu : lista de promovidas
+deactivate Partida
+
+Menu -> Menu : anuncia promocoes\nexibirClassificacao()
+Menu -> Partida : terminou()
+activate Partida
+Partida --> Menu : true / false
+deactivate Partida
+
+alt partida terminou
+  Menu -> Partida : determinarVencedor(nobreza)
+  Partida --> Menu : cidade vencedora
+  Menu --> Jogador : FIM DE JOGO + vencedor
+else continua
+  Menu -> Partida : getCidadeAtual()
+  Partida --> Menu : cidade do primeiro jogador
+  Menu --> Jogador : "Comeca o ano ... Agora e a vez de ..."
+end
+deactivate Menu
+@enduml
