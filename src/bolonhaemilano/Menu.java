@@ -67,8 +67,16 @@ public class Menu {
     }
 
     private int lerOpcao() {
+        return lerInteiro();
+    }
+
+    /**
+     * Le uma linha e converte para inteiro. Devolve -1 se nao for numero
+     * (e 0 se a entrada acabou, o que encerra o jogo / volta do submenu).
+     */
+    private int lerInteiro() {
         if (!scanner.hasNextLine()) {
-            return 0; // fim da entrada: encerra o jogo / volta
+            return 0;
         }
         String linha = scanner.nextLine().trim();
         try {
@@ -76,6 +84,18 @@ public class Menu {
         } catch (NumberFormatException e) {
             return -1;
         }
+    }
+
+    /**
+     * Se nao ha partida, avisa e devolve false. Cada opcao que precisa de
+     * jogo faz: if (!exigirJogoEmAndamento()) return;
+     */
+    private boolean exigirJogoEmAndamento() {
+        if (partida == null) {
+            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+            return false;
+        }
+        return true;
     }
 
     private void processarOpcao(int opcao) {
@@ -150,8 +170,7 @@ public class Menu {
     }
 
     private void exibirStatus() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         cidade.exibirStatus();
@@ -160,8 +179,7 @@ public class Menu {
     // ===================== MERCADO (Etapa 3) =====================
 
     private void abrirMercado() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         boolean noMercado = true;
@@ -204,15 +222,7 @@ public class Menu {
 
     private int lerQuantidade() {
         System.out.print("Quantidade: ");
-        if (!scanner.hasNextLine()) {
-            return -1;
-        }
-        String linha = scanner.nextLine().trim();
-        try {
-            return Integer.parseInt(linha);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        return lerInteiro();
     }
 
     private void comprarGraos() {
@@ -254,8 +264,7 @@ public class Menu {
     // ===================== AGRICULTURA (Etapa 4) =====================
 
     private void abrirAgricultura() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         boolean naAgricultura = true;
@@ -311,8 +320,7 @@ public class Menu {
     // ===================== GOVERNO (Etapa 5) =====================
 
     private void abrirGoverno() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         boolean noGoverno = true;
@@ -397,8 +405,7 @@ public class Menu {
     // ===================== CONSTRUCOES (Etapa 6) =====================
 
     private void abrirConstrucoes() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         boolean naConstrucoes = true;
@@ -450,8 +457,7 @@ public class Menu {
     // ===================== RODADAS E VITORIA (Etapa 7) =====================
 
     private void encerrarTurno() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         System.out.println("Turno de " + cidade.getDono().getNome() + " encerrado.");
@@ -480,8 +486,7 @@ public class Menu {
     }
 
     private void exibirClassificacao() {
-        if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+        if (!exigirJogoEmAndamento()) {
             return;
         }
         // ordena uma copia da lista: titulo mais alto primeiro; empate, maior prestigio
