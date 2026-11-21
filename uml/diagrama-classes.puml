@@ -19,6 +19,7 @@ class Menu {
   - governo: Governo
   - construcoes: Construcoes
   - nobreza: Nobreza
+  - eventos: Eventos
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
@@ -44,6 +45,7 @@ class Menu {
   - recrutarSoldados(): void
   - construir(): void
   - encerrarTurno(): void
+  - anunciarEventos(): void
   - exibirClassificacao(): void
   - encerrarPartida(): void
   - exibirSobre(): void
@@ -195,11 +197,22 @@ class Testes {
   - {static} testarConstrucoes(): void
   - {static} testarJogadorENobreza(): void
   - {static} testarPartida(): void
+  - {static} testarEventos(): void
 }
 note top of Testes
   Segundo main: testa as regras.
   Nenhuma classe do jogo conhece Testes.
 end note
+
+class Eventos <<extra>> {
+  - {static} SERVOS_POR_SOLDADO_NA_DEFESA: int = 10
+  - random: Random
+  + Eventos()
+  + Eventos(random: Random)
+  + sortearEvento(cidade: Cidade): String
+  + aplicarEvento(cidade: Cidade, sorteio: int): String
+  + cidadeEstaDefendida(cidade: Cidade): boolean
+}
 
 Main ..> Menu : cria e usa
 Menu --> "0..1" Partida
@@ -209,6 +222,9 @@ Menu --> "1" Agricultura
 Menu --> "1" Governo
 Menu --> "1" Construcoes
 Menu --> "1" Nobreza
+Menu --> "1" Eventos
+Eventos ..> Cidade : usa
+Testes ..> Eventos : testa
 Partida o--> "1..4" Cidade : cidades
 Cidade --> "1" Jogador : dono
 Partida ..> Nobreza : usa

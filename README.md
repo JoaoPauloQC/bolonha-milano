@@ -25,7 +25,7 @@ A classe `Testes` compila junto com o jogo (mesmo `javac`) e tem seu próprio `m
 java -cp bin bolonhaemilano.Testes
 ```
 
-Saída esperada no final: `Aprovados: 37 | Reprovados: 0`. Se algum teste falhar, aparece
+Saída esperada no final: `Aprovados: 43 | Reprovados: 0` (37 testes das regras do enunciado + 6 do extra). Se algum teste falhar, aparece
 `[FALHA] <descrição>` e o programa termina com código de saída 1.
 
 ## Como jogar
@@ -63,6 +63,22 @@ Cada submenu (3 a 6) tem a opção `0` para voltar. Entradas inválidas nunca tr
 - **Fim de jogo:** alguém vira Rei/Rainha ou termina o ano de 1410. Vence o título mais alto;
   empate, maior prestígio.
 
+### Extra: eventos aleatórios
+
+Melhoria opcional (classe `Eventos`): no começo de cada novo ano, cada cidade sofre um evento sorteado:
+
+| Sorteio | Evento | Efeito |
+|---------|--------|--------|
+| 15% | Ratos | −20% dos grãos |
+| 10% | Peste | −10% dos servos |
+| 15% | Saqueadores | −25% dos florins, **a menos que** a cidade tenha 1 soldado para cada 10 servos |
+| 15% | Boa safra | +20% dos grãos |
+| 10% | Imigrantes | +5% dos servos |
+| 35% | Ano tranquilo | nada muda |
+
+Com isso os soldados passam a ter uma função defensiva, além do prestígio. Os eventos acontecem
+depois da classificação do ano, então o fechamento do ano continua igual ao do enunciado.
+
 ### Exemplo (Ana × Beto, ano 1400)
 
 ```
@@ -98,6 +114,7 @@ Milano | Beto (Cavaleiro) | prestigio 340 (proximo titulo com 400)
 | `Governo` | Impostos, taxa e nível de justiça |
 | `Construcoes` | Recrutar soldados e construir |
 | `Nobreza` | Cálculo do prestígio e promoção de títulos |
+| `Eventos` | **Extra:** eventos aleatórios no começo de cada ano |
 | `Testes` | Testes automatizados das regras (preparar → executar → verificar) |
 
 ## Histórico das etapas
@@ -113,4 +130,4 @@ Cada etapa tem seu(s) commit(s) `etapa N` e a tag `etapa-N`.
 7. **Rodadas, múltiplos jogadores e vitória** — classes `Partida` e `Nobreza`.
 8. **Integração, testes e entrega final** — classe `Testes`, refatoração do `Menu`
    (`lerInteiro()` e `exigirJogoEmAndamento()`, sem mudar o comportamento), diagramas finais
-   (incluindo o de sequência) e este README.
+   (incluindo o de sequência) e este README. Extra: eventos aleatórios (classe `Eventos`).

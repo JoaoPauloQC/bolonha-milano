@@ -22,6 +22,7 @@ public class Menu {
     private Governo governo;
     private Construcoes construcoes;
     private Nobreza nobreza;
+    private Eventos eventos;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -31,6 +32,7 @@ public class Menu {
         governo = new Governo();
         construcoes = new Construcoes();
         nobreza = new Nobreza();
+        eventos = new Eventos();
     }
 
     public void executar() {
@@ -478,11 +480,22 @@ public class Menu {
                 return;
             }
             System.out.println("Comeca o ano " + partida.getAnoAtual() + ".");
+            anunciarEventos();
         }
 
         cidade = partida.getCidadeAtual();
         System.out.println("Agora e a vez de " + cidade.getDono().getNome() + " (" + cidade.getDono().getTitulo()
                 + "), de " + cidade.getNome() + ".");
+    }
+
+    /**
+     * EXTRA: no comeco de cada ano, um evento aleatorio acontece em cada cidade.
+     */
+    private void anunciarEventos() {
+        System.out.println("------------ EVENTOS DO ANO ------------");
+        for (Cidade c : partida.getCidades()) {
+            System.out.println(c.getNome() + ": " + eventos.sortearEvento(c));
+        }
     }
 
     private void exibirClassificacao() {
@@ -532,5 +545,9 @@ public class Menu {
         System.out.println("Colher e arrecadar impostos: uma vez por ano por cidade.");
         System.out.println("Fim: quando alguem vira Rei/Rainha ou ao fim de 1410. Vence o titulo");
         System.out.println("mais alto (empate: maior prestigio).");
+        System.out.println();
+        System.out.println("Extra: no comeco de cada ano acontece um evento aleatorio em cada");
+        System.out.println("cidade (ratos, peste, saqueadores, boa safra ou imigrantes). Tenha");
+        System.out.println("1 soldado para cada 10 servos para expulsar os saqueadores.");
     }
 }

@@ -53,6 +53,11 @@ alt partida terminou
 else continua
   Menu -> Partida : getCidadeAtual()
   Partida --> Menu : cidade do primeiro jogador
+  Menu -> Menu : anunciarEventos()
+  note right of Menu
+    EXTRA: um evento aleatorio
+    para cada cidade (Eventos)
+  end note
   Menu --> Jogador : "Comeca o ano ... Agora e a vez de ..."
 end
 deactivate Menu

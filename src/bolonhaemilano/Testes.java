@@ -1,6 +1,7 @@
 package bolonhaemilano;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Testes automatizados das regras do jogo, sem JUnit: cada teste segue o
@@ -23,6 +24,7 @@ public class Testes {
         testarConstrucoes();
         testarJogadorENobreza();
         testarPartida();
+        testarEventos();
 
         System.out.println();
         System.out.println("Aprovados: " + aprovados + " | Reprovados: " + reprovados);
@@ -177,5 +179,38 @@ public class Testes {
         partida.adicionarCidade(new Cidade("Veneza", new Jogador("Dora")));
         boolean aceitouQuinta = partida.adicionarCidade(new Cidade("Roma", new Jogador("Eva")));
         verificar("quinta cidade e recusada (maximo 4)", !aceitouQuinta);
+    }
+
+    // EXTRA: eventos aleatorios. O numero do sorteio e escolhido pelo teste.
+    private static void testarEventos() {
+        System.out.println();
+        System.out.println("-- Eventos (extra) --");
+        Eventos eventos = new Eventos(new Random(42));
+
+        Cidade cidade = novaCidade();
+        eventos.aplicarEvento(cidade, 0);
+        verificar("ratos levam 20% dos graos (500 -> 400)", cidade.getGraos() == 400);
+
+        Cidade doente = novaCidade();
+        eventos.aplicarEvento(doente, 20);
+        verificar("peste mata 10% dos servos (200 -> 180)", doente.getServos() == 180);
+
+        Cidade semDefesa = novaCidade();
+        eventos.aplicarEvento(semDefesa, 30);
+        verificar("saqueadores levam 25% dos florins de cidade sem soldados", semDefesa.getFlorins() == 750);
+
+        Cidade defendida = novaCidade();
+        defendida.adicionarSoldados(20); // 20 soldados para 200 servos
+        eventos.aplicarEvento(defendida, 30);
+        verificar("com 1 soldado para cada 10 servos os saqueadores sao expulsos", defendida.getFlorins() == 1000);
+
+        Cidade tranquila = novaCidade();
+        eventos.aplicarEvento(tranquila, 99);
+        verificar("ano tranquilo nao altera nada",
+                tranquila.getGraos() == 500 && tranquila.getServos() == 200 && tranquila.getFlorins() == 1000);
+
+        Cidade sorteada = novaCidade();
+        String descricao = eventos.sortearEvento(sorteada);
+        verificar("sortearEvento sempre devolve uma descricao", descricao != null && !descricao.isEmpty());
     }
 }
