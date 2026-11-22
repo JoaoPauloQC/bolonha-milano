@@ -1,6 +1,6 @@
 @startuml diagrama-classes
 !pragma layout smetana
-title Bolonha e Milano - Diagrama de classes (Etapa 8 - final)
+title Bolonha e Milano - Diagrama de classes (Etapa 8 + extras)
 skinparam classAttributeIconSize 0
 hide empty members
 
@@ -20,6 +20,8 @@ class Menu {
   - construcoes: Construcoes
   - nobreza: Nobreza
   - eventos: Eventos
+  - persistencia: Persistencia
+  - tela: Tela
   + executar(): void
   - exibirOpcoes(): void
   - lerOpcao(): int
@@ -48,6 +50,9 @@ class Menu {
   - anunciarEventos(): void
   - exibirClassificacao(): void
   - encerrarPartida(): void
+  - exibirHistorico(): void
+  - salvarPartida(): void
+  - carregarPartida(): void
   - exibirSobre(): void
 }
 
@@ -66,6 +71,9 @@ class Partida {
   + terminou(): boolean
   + determinarVencedor(nobreza: Nobreza): Cidade
   - estaNaFrente(a: Cidade, b: Cidade, nobreza: Nobreza): boolean
+  - registrarHistorico(cidade: Cidade, ano: int, nobreza: Nobreza): void
+  + getIndiceAtual(): int
+  + restaurarVez(indice: int): boolean
 }
 
 class Jogador {
@@ -73,6 +81,7 @@ class Jogador {
   - nome: String
   - nivelTitulo: int
   + Jogador(nome: String)
+  ~ Jogador(nome: String, nivelTitulo: int)
   + getNome(): String
   + getTitulo(): String
   + getNivelTitulo(): int
@@ -94,7 +103,11 @@ class Cidade {
   - construcoes: int
   - colheitaFeita: boolean
   - impostosArrecadados: boolean
+  - historico: List<RegistroAnual>
   + Cidade(nome: String, dono: Jogador)
+  ~ Cidade(nome, dono, ano, recursos..., indicadores...)
+  + registrarAno(registro: RegistroAnual): void
+  + getHistorico(): List<RegistroAnual>
   + getNome(): String
   + getAnoAtual(): int
   + getDono(): Jogador
@@ -198,6 +211,8 @@ class Testes {
   - {static} testarJogadorENobreza(): void
   - {static} testarPartida(): void
   - {static} testarEventos(): void
+  - {static} testarHistorico(): void
+  - {static} testarPersistencia(): void
 }
 note top of Testes
   Segundo main: testa as regras.
@@ -214,6 +229,46 @@ class Eventos <<extra>> {
   + cidadeEstaDefendida(cidade: Cidade): boolean
 }
 
+class RegistroAnual <<extra>> {
+  - ano: int
+  - titulo: String
+  - prestigio: int
+  - florins: int
+  - graos: int
+  - servos: int
+  - soldados: int
+  - construcoes: int
+  + getAno(): int
+  + getTitulo(): String
+  + getPrestigio(): int
+  + getFlorins() / getGraos() / getServos(): int
+  + getSoldados() / getConstrucoes(): int
+}
+
+class Persistencia <<extra>> {
+  + {static} ARQUIVO_PADRAO: String = "partida-salva.txt"
+  - {static} CABECALHO: String
+  - {static} SEPARADOR: String = ";"
+  + salvar(partida: Partida, caminho: String): boolean
+  + carregar(caminho: String): Partida
+  - lerCidade(campos: String[]): Cidade
+  - limpar(texto: String): String
+}
+
+class Tela <<extra>> {
+  - {static} RESET / VERDE / VERMELHO / AMARELO: String
+  - interativo: boolean
+  - comCores: boolean
+  + isInterativo(): boolean
+  + limparTela(): void
+  + pausar(scanner: Scanner): void
+  + sucesso(texto: String): String
+  + erro(texto: String): String
+  + destaque(texto: String): String
+  - colorir(cor: String, texto: String): String
+  - {static} terminalInterativo(): boolean
+}
+
 Main ..> Menu : cria e usa
 Menu --> "0..1" Partida
 Menu --> "0..1" Cidade : vez atual
@@ -223,6 +278,12 @@ Menu --> "1" Governo
 Menu --> "1" Construcoes
 Menu --> "1" Nobreza
 Menu --> "1" Eventos
+Menu --> "1" Persistencia
+Menu --> "1" Tela
+Cidade *--> "0..*" RegistroAnual : historico
+Partida ..> RegistroAnual : cria
+Persistencia ..> Partida : salva/carrega
+Testes ..> Persistencia : testa
 Eventos ..> Cidade : usa
 Testes ..> Eventos : testa
 Partida o--> "1..4" Cidade : cidades

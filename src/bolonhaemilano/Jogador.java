@@ -18,6 +18,17 @@ public class Jogador {
         this.nivelTitulo = 0; // Cavaleiro
     }
 
+    /**
+     * EXTRA: restaura um jogador salvo em arquivo (usado pela Persistencia).
+     * Um nivel invalido volta a ser Cavaleiro.
+     */
+    Jogador(String nome, int nivelTitulo) {
+        this(nome);
+        if (nivelTitulo >= 0 && nivelTitulo < TITULOS.length) {
+            this.nivelTitulo = nivelTitulo;
+        }
+    }
+
     public String getNome() {
         return nome;
     }

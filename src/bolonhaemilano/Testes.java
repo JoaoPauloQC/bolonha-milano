@@ -1,5 +1,7 @@
 package bolonhaemilano;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -25,6 +27,8 @@ public class Testes {
         testarJogadorENobreza();
         testarPartida();
         testarEventos();
+        testarHistorico();
+        testarPersistencia();
 
         System.out.println();
         System.out.println("Aprovados: " + aprovados + " | Reprovados: " + reprovados);
@@ -212,5 +216,80 @@ public class Testes {
         Cidade sorteada = novaCidade();
         String descricao = eventos.sortearEvento(sorteada);
         verificar("sortearEvento sempre devolve uma descricao", descricao != null && !descricao.isEmpty());
+    }
+
+    // EXTRA: historico anual
+    private static void testarHistorico() {
+        System.out.println();
+        System.out.println("-- Historico (extra) --");
+        Nobreza nobreza = new Nobreza();
+        Partida partida = new Partida();
+        Cidade bolonha = novaCidade();
+        partida.adicionarCidade(bolonha);
+
+        verificar("cidade nova nao tem historico", bolonha.getHistorico().isEmpty());
+
+        bolonha.adicionarConstrucoes(10); // prestigio 400: vira Barao ao fechar 1400
+        partida.passarTurno();
+        partida.encerrarAno(nobreza);
+        RegistroAnual registro = bolonha.getHistorico().get(0);
+        verificar("encerrarAno registra o ano que fechou (1400)",
+                bolonha.getHistorico().size() == 1 && registro.getAno() == 1400);
+        verificar("... com o prestigio e o titulo ja promovido",
+                registro.getPrestigio() == 400 && registro.getTitulo().equals("Barao"));
+    }
+
+    // EXTRA: salvar e carregar a partida
+    private static void testarPersistencia() {
+        System.out.println();
+        System.out.println("-- Persistencia (extra) --");
+        Persistencia persistencia = new Persistencia();
+        Nobreza nobreza = new Nobreza();
+
+        // preparar: partida com 2 cidades, um ano fechado, vez de Milano
+        Partida partida = new Partida();
+        Cidade bolonha = new Cidade("Bolonha", new Jogador("Ana"));
+        Cidade milano = new Cidade("Milano", new Jogador("Beto"));
+        partida.adicionarCidade(bolonha);
+        partida.adicionarCidade(milano);
+        bolonha.adicionarConstrucoes(10);
+        partida.passarTurno();
+        partida.passarTurno();
+        partida.encerrarAno(nobreza);
+        new Governo().definirJustica(milano, "Severa");
+        new Agricultura().processarColheita(milano);
+        partida.passarTurno();
+
+        File arquivo;
+        try {
+            arquivo = File.createTempFile("bolonha-teste", ".txt");
+            arquivo.deleteOnExit();
+        } catch (IOException e) {
+            verificar("criar arquivo temporario para o teste", false);
+            return;
+        }
+
+        // executar
+        boolean salvou = persistencia.salvar(partida, arquivo.getPath());
+        Partida carregada = persistencia.carregar(arquivo.getPath());
+
+        // verificar
+        verificar("salvar a partida da certo", salvou);
+        verificar("carregar devolve uma partida com as 2 cidades",
+                carregada != null && carregada.getCidades().size() == 2);
+        if (carregada == null) {
+            return;
+        }
+        Cidade b = carregada.getCidades().get(0);
+        Cidade m = carregada.getCidades().get(1);
+        verificar("... mantem ano, titulo e recursos",
+                b.getAnoAtual() == 1401 && b.getDono().getTitulo().equals("Barao")
+                        && b.getConstrucoes() == 10 && b.getFlorins() == bolonha.getFlorins());
+        verificar("... mantem justica e colheita feita no ano",
+                m.getNivelJustica().equals("Severa") && m.isColheitaFeita() && m.getGraos() == milano.getGraos());
+        verificar("... mantem de quem e a vez (Milano)", carregada.getCidadeAtual().getNome().equals("Milano"));
+        verificar("... mantem o historico", b.getHistorico().size() == 1 && b.getHistorico().get(0).getAno() == 1400);
+        verificar("carregar arquivo inexistente devolve null",
+                persistencia.carregar(arquivo.getPath() + "-nao-existe") == null);
     }
 }

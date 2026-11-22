@@ -23,6 +23,8 @@ public class Menu {
     private Construcoes construcoes;
     private Nobreza nobreza;
     private Eventos eventos;
+    private Persistencia persistencia;
+    private Tela tela;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -33,6 +35,8 @@ public class Menu {
         construcoes = new Construcoes();
         nobreza = new Nobreza();
         eventos = new Eventos();
+        persistencia = new Persistencia();
+        tela = new Tela();
     }
 
     public void executar() {
@@ -45,6 +49,7 @@ public class Menu {
     }
 
     private void exibirOpcoes() {
+        tela.limparTela();
         System.out.println();
         System.out.println("==========================================");
         System.out.println("             BOLONHA E MILANO");
@@ -64,6 +69,9 @@ public class Menu {
         System.out.println("7 - Encerrar turno");
         System.out.println("8 - Ver classificacao");
         System.out.println("9 - Sobre o jogo");
+        System.out.println("10 - Ver historico da cidade (extra)");
+        System.out.println("11 - Salvar partida (extra)");
+        System.out.println("12 - Carregar partida (extra)");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opcao: ");
     }
@@ -94,7 +102,7 @@ public class Menu {
      */
     private boolean exigirJogoEmAndamento() {
         if (partida == null) {
-            System.out.println("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro.");
+            System.out.println(tela.erro("Nenhum jogo em andamento. Escolha 'Novo jogo' primeiro."));
             return false;
         }
         return true;
@@ -129,13 +137,25 @@ public class Menu {
             case 9:
                 exibirSobre();
                 break;
+            case 10:
+                exibirHistorico();
+                break;
+            case 11:
+                salvarPartida();
+                break;
+            case 12:
+                carregarPartida();
+                break;
             case 0:
                 System.out.println("Ate a proxima!");
                 emExecucao = false;
                 break;
             default:
-                System.out.println("Opcao invalida. Tente novamente.");
+                System.out.println(tela.erro("Opcao invalida. Tente novamente."));
                 break;
+        }
+        if (emExecucao) {
+            tela.pausar(scanner); // EXTRA: segura o resultado na tela
         }
     }
 
@@ -144,7 +164,7 @@ public class Menu {
         int quantidade = lerOpcao();
         if (quantidade < 1 || quantidade > Partida.MAXIMO_JOGADORES) {
             quantidade = 2;
-            System.out.println("Quantidade invalida: a partida tera 2 jogadores.");
+            System.out.println(tela.erro("Quantidade invalida: a partida tera 2 jogadores."));
         }
 
         partida = new Partida();
@@ -216,7 +236,7 @@ public class Menu {
                     noMercado = false;
                     break;
                 default:
-                    System.out.println("Opcao invalida. Tente novamente.");
+                    System.out.println(tela.erro("Opcao invalida. Tente novamente."));
                     break;
             }
         }
@@ -230,36 +250,36 @@ public class Menu {
     private void comprarGraos() {
         int quantidade = lerQuantidade();
         if (mercado.comprarGraos(cidade, quantidade)) {
-            System.out.println("Compra realizada: +" + quantidade + " graos.");
+            System.out.println(tela.sucesso("Compra realizada: +" + quantidade + " graos."));
         } else {
-            System.out.println("Compra recusada: quantidade invalida ou florins insuficientes.");
+            System.out.println(tela.erro("Compra recusada: quantidade invalida ou florins insuficientes."));
         }
     }
 
     private void venderGraos() {
         int quantidade = lerQuantidade();
         if (mercado.venderGraos(cidade, quantidade)) {
-            System.out.println("Venda realizada: -" + quantidade + " graos.");
+            System.out.println(tela.sucesso("Venda realizada: -" + quantidade + " graos."));
         } else {
-            System.out.println("Venda recusada: quantidade invalida ou graos insuficientes.");
+            System.out.println(tela.erro("Venda recusada: quantidade invalida ou graos insuficientes."));
         }
     }
 
     private void comprarTerras() {
         int quantidade = lerQuantidade();
         if (mercado.comprarTerras(cidade, quantidade)) {
-            System.out.println("Compra realizada: +" + quantidade + " hectares.");
+            System.out.println(tela.sucesso("Compra realizada: +" + quantidade + " hectares."));
         } else {
-            System.out.println("Compra recusada: quantidade invalida ou florins insuficientes.");
+            System.out.println(tela.erro("Compra recusada: quantidade invalida ou florins insuficientes."));
         }
     }
 
     private void venderTerras() {
         int quantidade = lerQuantidade();
         if (mercado.venderTerras(cidade, quantidade)) {
-            System.out.println("Venda realizada: -" + quantidade + " hectares.");
+            System.out.println(tela.sucesso("Venda realizada: -" + quantidade + " hectares."));
         } else {
-            System.out.println("Venda recusada: quantidade invalida ou terras insuficientes.");
+            System.out.println(tela.erro("Venda recusada: quantidade invalida ou terras insuficientes."));
         }
     }
 
@@ -291,7 +311,7 @@ public class Menu {
                     naAgricultura = false;
                     break;
                 default:
-                    System.out.println("Opcao invalida. Tente novamente.");
+                    System.out.println(tela.erro("Opcao invalida. Tente novamente."));
                     break;
             }
         }
@@ -300,11 +320,11 @@ public class Menu {
     private void colher() {
         int hectares = agricultura.processarColheita(cidade);
         if (hectares == -1) {
-            System.out.println("A colheita deste ano ja foi feita. Aguarde o proximo ano.");
+            System.out.println(tela.erro("A colheita deste ano ja foi feita. Aguarde o proximo ano."));
             return;
         }
-        System.out.println("Colheita feita: " + hectares + " hectares cultivados. Graos em estoque: "
-                + cidade.getGraos());
+        System.out.println(tela.sucesso("Colheita feita: " + hectares + " hectares cultivados. Graos em estoque: "
+                + cidade.getGraos()));
     }
 
     private void distribuirAlimentos() {
@@ -312,10 +332,10 @@ public class Menu {
         int percentual = lerOpcao();
         int servosAntes = cidade.getServos();
         if (agricultura.distribuirAlimentos(cidade, percentual)) {
-            System.out.println("Alimentos distribuidos. Servos: " + servosAntes + " -> " + cidade.getServos()
-                    + " | Graos restantes: " + cidade.getGraos());
+            System.out.println(tela.sucesso("Alimentos distribuidos. Servos: " + servosAntes + " -> "
+                    + cidade.getServos() + " | Graos restantes: " + cidade.getGraos()));
         } else {
-            System.out.println("Distribuicao recusada: o percentual deve ficar entre 20 e 80.");
+            System.out.println(tela.erro("Distribuicao recusada: o percentual deve ficar entre 20 e 80."));
         }
     }
 
@@ -351,7 +371,7 @@ public class Menu {
                     noGoverno = false;
                     break;
                 default:
-                    System.out.println("Opcao invalida. Tente novamente.");
+                    System.out.println(tela.erro("Opcao invalida. Tente novamente."));
                     break;
             }
         }
@@ -360,19 +380,19 @@ public class Menu {
     private void arrecadarImpostos() {
         int arrecadado = governo.arrecadarImpostos(cidade);
         if (arrecadado == -1) {
-            System.out.println("Os impostos deste ano ja foram arrecadados. Aguarde o proximo ano.");
+            System.out.println(tela.erro("Os impostos deste ano ja foram arrecadados. Aguarde o proximo ano."));
             return;
         }
-        System.out.println("Impostos arrecadados: " + arrecadado + " florins. Florins: " + cidade.getFlorins());
+        System.out.println(tela.sucesso("Impostos arrecadados: " + arrecadado + " florins. Florins: " + cidade.getFlorins()));
     }
 
     private void definirTaxaImposto() {
         System.out.print("Nova taxa de imposto (0 a 50): ");
         int taxa = lerOpcao();
         if (governo.definirTaxaImposto(cidade, taxa)) {
-            System.out.println("Taxa de imposto definida em " + taxa + "%.");
+            System.out.println(tela.sucesso("Taxa de imposto definida em " + taxa + "%."));
         } else {
-            System.out.println("Taxa recusada: deve ficar entre 0 e 50.");
+            System.out.println(tela.erro("Taxa recusada: deve ficar entre 0 e 50."));
         }
     }
 
@@ -398,9 +418,9 @@ public class Menu {
                 break;
         }
         if (governo.definirJustica(cidade, nivel)) {
-            System.out.println("Nivel de justica definido: " + nivel + ".");
+            System.out.println(tela.sucesso("Nivel de justica definido: " + nivel + "."));
         } else {
-            System.out.println("Opcao invalida: o nivel de justica nao foi alterado.");
+            System.out.println(tela.erro("Opcao invalida: o nivel de justica nao foi alterado."));
         }
     }
 
@@ -432,7 +452,7 @@ public class Menu {
                     naConstrucoes = false;
                     break;
                 default:
-                    System.out.println("Opcao invalida. Tente novamente.");
+                    System.out.println(tela.erro("Opcao invalida. Tente novamente."));
                     break;
             }
         }
@@ -441,18 +461,18 @@ public class Menu {
     private void recrutarSoldados() {
         int quantidade = lerQuantidade();
         if (construcoes.recrutarSoldados(cidade, quantidade)) {
-            System.out.println("Recrutamento feito: +" + quantidade + " soldados.");
+            System.out.println(tela.sucesso("Recrutamento feito: +" + quantidade + " soldados."));
         } else {
-            System.out.println("Recrutamento recusado: quantidade invalida, florins ou servos insuficientes.");
+            System.out.println(tela.erro("Recrutamento recusado: quantidade invalida, florins ou servos insuficientes."));
         }
     }
 
     private void construir() {
         int quantidade = lerQuantidade();
         if (construcoes.construir(cidade, quantidade)) {
-            System.out.println("Obra concluida: +" + quantidade + " construcoes.");
+            System.out.println(tela.sucesso("Obra concluida: +" + quantidade + " construcoes."));
         } else {
-            System.out.println("Construcao recusada: quantidade invalida ou florins insuficientes.");
+            System.out.println(tela.erro("Construcao recusada: quantidade invalida ou florins insuficientes."));
         }
     }
 
@@ -471,8 +491,8 @@ public class Menu {
             System.out.println();
             System.out.println("========= FIM DO ANO " + anoQueTerminou + " =========");
             for (Cidade promovida : promovidas) {
-                System.out.println(promovida.getDono().getNome() + ", de " + promovida.getNome()
-                        + ", agora e " + promovida.getDono().getTitulo() + "!");
+                System.out.println(tela.destaque(promovida.getDono().getNome() + ", de " + promovida.getNome()
+                        + ", agora e " + promovida.getDono().getTitulo() + "!"));
             }
             exibirClassificacao();
             if (partida.terminou()) {
@@ -525,11 +545,73 @@ public class Menu {
         Cidade vencedora = partida.determinarVencedor(nobreza);
         System.out.println();
         System.out.println("============ FIM DE JOGO ============");
-        System.out.println("Vencedor: " + vencedora.getDono().getNome() + " (" + vencedora.getDono().getTitulo()
-                + "), de " + vencedora.getNome() + ", com prestigio " + nobreza.calcularPrestigio(vencedora) + "!");
+        System.out.println(tela.destaque("Vencedor: " + vencedora.getDono().getNome() + " ("
+                + vencedora.getDono().getTitulo() + "), de " + vencedora.getNome() + ", com prestigio "
+                + nobreza.calcularPrestigio(vencedora) + "!"));
         System.out.println("Escolha 'Novo jogo' para jogar de novo.");
         partida = null;
         cidade = null;
+    }
+
+    // ===================== EXTRAS =====================
+
+    /**
+     * EXTRA: mostra a evolucao da cidade da vez, um ano por linha.
+     */
+    private void exibirHistorico() {
+        if (!exigirJogoEmAndamento()) {
+            return;
+        }
+        System.out.println();
+        System.out.println("------- HISTORICO DE " + cidade.getNome().toUpperCase() + " -------");
+        if (cidade.getHistorico().isEmpty()) {
+            System.out.println("Nenhum ano fechado ainda. O historico aparece ao fim de cada ano.");
+            return;
+        }
+        System.out.printf("%-5s %-11s %9s %8s %7s %7s %8s %11s%n",
+                "Ano", "Titulo", "Prestigio", "Florins", "Graos", "Servos", "Soldados", "Construcoes");
+        int prestigioAnterior = -1;
+        for (RegistroAnual r : cidade.getHistorico()) {
+            String variacao = "";
+            if (prestigioAnterior >= 0) {
+                int diferenca = r.getPrestigio() - prestigioAnterior;
+                variacao = diferenca >= 0 ? " (+" + diferenca + ")" : " (" + diferenca + ")";
+            }
+            System.out.printf("%-5d %-11s %9d %8d %7d %7d %8d %11d%s%n",
+                    r.getAno(), r.getTitulo(), r.getPrestigio(), r.getFlorins(), r.getGraos(),
+                    r.getServos(), r.getSoldados(), r.getConstrucoes(), variacao);
+            prestigioAnterior = r.getPrestigio();
+        }
+    }
+
+    /**
+     * EXTRA: grava a partida em andamento no arquivo partida-salva.txt.
+     */
+    private void salvarPartida() {
+        if (!exigirJogoEmAndamento()) {
+            return;
+        }
+        if (persistencia.salvar(partida, Persistencia.ARQUIVO_PADRAO)) {
+            System.out.println(tela.sucesso("Partida salva em " + Persistencia.ARQUIVO_PADRAO + "."));
+        } else {
+            System.out.println(tela.erro("Nao foi possivel salvar a partida."));
+        }
+    }
+
+    /**
+     * EXTRA: continua uma partida salva antes (substitui a partida atual).
+     */
+    private void carregarPartida() {
+        Partida carregada = persistencia.carregar(Persistencia.ARQUIVO_PADRAO);
+        if (carregada == null) {
+            System.out.println(tela.erro("Nenhuma partida salva valida em " + Persistencia.ARQUIVO_PADRAO + "."));
+            return;
+        }
+        partida = carregada;
+        cidade = partida.getCidadeAtual();
+        System.out.println(tela.sucesso("Partida carregada! Ano " + partida.getAnoAtual() + "."));
+        System.out.println("Agora e a vez de " + cidade.getDono().getNome() + " (" + cidade.getDono().getTitulo()
+                + "), de " + cidade.getNome() + ".");
     }
 
     private void exibirSobre() {
@@ -549,5 +631,7 @@ public class Menu {
         System.out.println("Extra: no comeco de cada ano acontece um evento aleatorio em cada");
         System.out.println("cidade (ratos, peste, saqueadores, boa safra ou imigrantes). Tenha");
         System.out.println("1 soldado para cada 10 servos para expulsar os saqueadores.");
+        System.out.println("Extras: historico anual (10), salvar (11) e carregar (12) a partida,");
+        System.out.println("tela limpa, pausa e cores quando jogado num terminal.");
     }
 }

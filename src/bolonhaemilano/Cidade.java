@@ -1,5 +1,8 @@
 package bolonhaemilano;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * O que e governado: a cidade-Estado, com seu ano atual, o jogador dono,
  * os recursos (florins, terras, graos, servos, soldados e construcoes)
@@ -23,6 +26,7 @@ public class Cidade {
     private int construcoes;
     private boolean colheitaFeita;
     private boolean impostosArrecadados;
+    private List<RegistroAnual> historico; // EXTRA: historico anual
 
     public Cidade(String nome, Jogador dono) {
         this.nome = nome;
@@ -38,6 +42,36 @@ public class Cidade {
         this.construcoes = 0;
         this.colheitaFeita = false;
         this.impostosArrecadados = false;
+        this.historico = new ArrayList<>();
+    }
+
+    /**
+     * EXTRA: restaura uma cidade salva em arquivo (usado pela Persistencia).
+     */
+    Cidade(String nome, Jogador dono, int anoAtual, int florins, int terras, int graos, int servos,
+           int taxaImposto, String nivelJustica, int soldados, int construcoes,
+           boolean colheitaFeita, boolean impostosArrecadados) {
+        this(nome, dono);
+        this.anoAtual = anoAtual;
+        this.florins = florins;
+        this.terras = terras;
+        this.graos = graos;
+        this.servos = servos;
+        this.taxaImposto = taxaImposto;
+        this.nivelJustica = nivelJustica;
+        this.soldados = soldados;
+        this.construcoes = construcoes;
+        this.colheitaFeita = colheitaFeita;
+        this.impostosArrecadados = impostosArrecadados;
+    }
+
+    // ---------- historico anual (EXTRA) ----------
+    public void registrarAno(RegistroAnual registro) {
+        historico.add(registro);
+    }
+
+    public List<RegistroAnual> getHistorico() {
+        return historico;
     }
 
     public String getNome() {

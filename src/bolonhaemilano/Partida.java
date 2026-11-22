@@ -67,12 +67,41 @@ public class Partida {
     public List<Cidade> encerrarAno(Nobreza nobreza) {
         List<Cidade> promovidas = new ArrayList<>();
         for (Cidade cidade : cidades) {
+            int anoQueFechou = cidade.getAnoAtual();
             cidade.avancarAno();
             if (nobreza.verificarPromocao(cidade)) {
                 promovidas.add(cidade);
             }
+            registrarHistorico(cidade, anoQueFechou, nobreza);
         }
         return promovidas;
+    }
+
+    /**
+     * EXTRA: guarda a foto da cidade no ano que acabou de fechar.
+     */
+    private void registrarHistorico(Cidade cidade, int ano, Nobreza nobreza) {
+        cidade.registrarAno(new RegistroAnual(ano, cidade.getDono().getTitulo(),
+                nobreza.calcularPrestigio(cidade), cidade.getFlorins(), cidade.getGraos(),
+                cidade.getServos(), cidade.getSoldados(), cidade.getConstrucoes()));
+    }
+
+    /**
+     * EXTRA: indice de quem esta jogando (usado para salvar a partida).
+     */
+    public int getIndiceAtual() {
+        return indiceAtual;
+    }
+
+    /**
+     * EXTRA: devolve a vez para um jogador ao carregar uma partida salva.
+     */
+    public boolean restaurarVez(int indice) {
+        if (indice < 0 || indice >= cidades.size()) {
+            return false;
+        }
+        indiceAtual = indice;
+        return true;
     }
 
     /**

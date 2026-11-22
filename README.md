@@ -25,7 +25,7 @@ A classe `Testes` compila junto com o jogo (mesmo `javac`) e tem seu próprio `m
 java -cp bin bolonhaemilano.Testes
 ```
 
-Saída esperada no final: `Aprovados: 43 | Reprovados: 0` (37 testes das regras do enunciado + 6 do extra). Se algum teste falhar, aparece
+Saída esperada no final: `Aprovados: 53 | Reprovados: 0` (37 testes das regras do enunciado + 16 dos extras). Se algum teste falhar, aparece
 `[FALHA] <descrição>` e o programa termina com código de saída 1.
 
 ## Como jogar
@@ -45,6 +45,9 @@ No topo aparece sempre o ano e de quem é a vez. As ações valem para a cidade 
 | `7` Encerrar turno | Passa a vez; o último jogador da rodada fecha o ano |
 | `8` Ver classificação | Prestígio de cada cidade e meta do próximo título |
 | `9` Sobre o jogo | Resumo das regras |
+| `10` Ver histórico (extra) | Evolução da cidade da vez, ano a ano |
+| `11` Salvar partida (extra) | Grava a partida em `partida-salva.txt` |
+| `12` Carregar partida (extra) | Continua a partida salva |
 | `0` Sair | Encerra o programa |
 
 Cada submenu (3 a 6) tem a opção `0` para voltar. Entradas inválidas nunca travam o programa.
@@ -63,7 +66,23 @@ Cada submenu (3 a 6) tem a opção `0` para voltar. Entradas inválidas nunca tr
 - **Fim de jogo:** alguém vira Rei/Rainha ou termina o ano de 1410. Vence o título mais alto;
   empate, maior prestígio.
 
-### Extra: eventos aleatórios
+## Extras (melhorias opcionais)
+
+Além do enunciado das 8 etapas, o jogo tem:
+
+1. **Eventos aleatórios** (classe `Eventos`), detalhados abaixo.
+2. **Histórico anual** (classe `RegistroAnual`, opção `10`): ao fechar cada ano, a `Partida` guarda
+   uma "foto" de cada cidade (título, prestígio, florins, grãos, servos, soldados e construções). A
+   tabela mostra também quanto o prestígio subiu ou caiu de um ano para o outro.
+3. **Salvar e carregar a partida** (classe `Persistencia`, opções `11` e `12`): arquivo de texto
+   `partida-salva.txt` com as cidades, a vez, os indicadores do ano e o histórico.
+4. **Tela limpa, pausa e cores** (classe `Tela`): a cada volta do menu a tela é limpa e, depois de
+   cada ação, o jogo espera o ENTER. Mensagens de sucesso aparecem em verde, as de erro em vermelho e
+   as promoções e o vencedor em amarelo. Isso só é ativado quando o jogo roda num terminal; se a
+   entrada vier de um arquivo (`java ... < jogadas.txt`), a saída fica sem cores e sem pausas. Para
+   desligar só as cores: `java -Dcores=false -cp bin bolonhaemilano.Main`.
+
+### Eventos aleatórios
 
 Melhoria opcional (classe `Eventos`): no começo de cada novo ano, cada cidade sofre um evento sorteado:
 
@@ -115,6 +134,9 @@ Milano | Beto (Cavaleiro) | prestigio 340 (proximo titulo com 400)
 | `Construcoes` | Recrutar soldados e construir |
 | `Nobreza` | Cálculo do prestígio e promoção de títulos |
 | `Eventos` | **Extra:** eventos aleatórios no começo de cada ano |
+| `RegistroAnual` | **Extra:** foto de uma cidade no fim de um ano (histórico) |
+| `Persistencia` | **Extra:** salvar e carregar a partida em arquivo |
+| `Tela` | **Extra:** limpar a tela, pausar e cores no terminal |
 | `Testes` | Testes automatizados das regras (preparar → executar → verificar) |
 
 ## Histórico das etapas
@@ -131,3 +153,6 @@ Cada etapa tem seu(s) commit(s) `etapa N` e a tag `etapa-N`.
 8. **Integração, testes e entrega final** — classe `Testes`, refatoração do `Menu`
    (`lerInteiro()` e `exigirJogoEmAndamento()`, sem mudar o comportamento), diagramas finais
    (incluindo o de sequência) e este README. Extra: eventos aleatórios (classe `Eventos`).
+
+Depois das etapas, um commit `extras` com histórico anual, salvar/carregar a partida, tela limpa,
+pausa e cores.

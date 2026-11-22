@@ -1,6 +1,6 @@
 @startuml diagrama-casos-de-uso
 !pragma layout smetana
-title Bolonha e Milano - Casos de uso (Etapa 8 - final)
+title Bolonha e Milano - Casos de uso (Etapa 8 + extras)
 top to bottom direction
 
 actor Jogador
@@ -15,6 +15,9 @@ rectangle "Bolonha e Milano" {
   usecase "Encerrar turno" as UC7
   usecase "Ver classificacao" as UC8
   usecase "Ver informacoes sobre o jogo" as UC9
+  usecase "Ver historico da cidade\n(extra)" as X1
+  usecase "Salvar partida\n(extra)" as X2
+  usecase "Carregar partida\n(extra)" as X3
   usecase "Sair do jogo" as UC10
 
   usecase "Comprar graos" as M1
@@ -45,6 +48,9 @@ Jogador --> UC6
 Jogador --> UC7
 Jogador --> UC8
 Jogador --> UC9
+Jogador --> X1
+Jogador --> X2
+Jogador --> X3
 Jogador --> UC10
 UC1 ..> UC2 : <<include>>
 
